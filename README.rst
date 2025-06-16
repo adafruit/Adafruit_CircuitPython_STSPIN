@@ -92,7 +92,20 @@ Usage Example
 
 .. code-block:: python
 
-    import adafruit_stspin
+    import time
+    import adafruit_stspin220
+    import board
+
+    STEPS_PER_REVOLUTION = 200
+
+    STEP_PIN = board.D5
+    DIR_PIN = board.D6
+    motor = adafruit_stspin220.STSPIN220(STEP_PIN, DIR_PIN, STEPS_PER_REVOLUTION)
+    motor.speed = 60
+
+    total_microsteps = STEPS_PER_REVOLUTION * motor.microsteps_per_step
+
+    motor.step(total_microsteps)
 
 Documentation
 =============
