@@ -8,22 +8,23 @@ Microstepping mode test for the Adafruit STSPIN220 stepper motor driver.
 
 import time
 
-import adafruit_stspin220
 import board
+
+import adafruit_stspin
 
 # Define the number of steps per revolution for your stepper motor
 # Most steppers are 200 steps per revolution (1.8 degrees per step)
 STEPS_PER_REVOLUTION = 200
 
-STEP_PIN = board.D5  # Step clock pin
-DIR_PIN = board.D6  # Direction pin
+DIR_PIN = board.D5  # DIRection pin
+STEP_PIN = board.D6  # STEP pin
 MODE1_PIN = board.D9  # Mode 1 pin (REQUIRED for mode switching)
 MODE2_PIN = board.D10  # Mode 2 pin (REQUIRED for mode switching)
 EN_FAULT_PIN = board.D11  # Enable/Fault pin (optional)
 STBY_RESET_PIN = board.D12  # Standby/Reset pin (REQUIRED for mode switching)
 
 print("Initializing STSPIN220...")
-motor = adafruit_stspin220.STSPIN220(
+motor = adafruit_stspin.STSPIN(
     STEP_PIN,
     DIR_PIN,
     STEPS_PER_REVOLUTION,
@@ -38,23 +39,18 @@ print("=" * 50)
 
 # Define all available modes with their names for display
 MODES = [
-    (adafruit_stspin220.Modes.STEP_FULL, "Full Step"),
-    (adafruit_stspin220.Modes.STEP_1_2, "1/2 Step"),
-    (adafruit_stspin220.Modes.STEP_1_4, "1/4 Step"),
-    (adafruit_stspin220.Modes.STEP_1_8, "1/8 Step"),
-    (adafruit_stspin220.Modes.STEP_1_16, "1/16 Step"),
-    (adafruit_stspin220.Modes.STEP_1_32, "1/32 Step"),
-    (adafruit_stspin220.Modes.STEP_1_64, "1/64 Step"),
-    (adafruit_stspin220.Modes.STEP_1_128, "1/128 Step"),
-    (adafruit_stspin220.Modes.STEP_1_256, "1/256 Step"),
+    (adafruit_stspin.Modes.STEP_FULL, "Full Step"),
+    (adafruit_stspin.Modes.STEP_1_2, "1/2 Step"),
+    (adafruit_stspin.Modes.STEP_1_4, "1/4 Step"),
+    (adafruit_stspin.Modes.STEP_1_8, "1/8 Step"),
+    (adafruit_stspin.Modes.STEP_1_16, "1/16 Step"),
+    (adafruit_stspin.Modes.STEP_1_32, "1/32 Step"),
+    (adafruit_stspin.Modes.STEP_1_64, "1/64 Step"),
+    (adafruit_stspin.Modes.STEP_1_128, "1/128 Step"),
+    (adafruit_stspin.Modes.STEP_1_256, "1/256 Step"),
 ]
 
-BASE_RPM = 30  # Base speed for full step mode
-
-print(f"Base speed: {BASE_RPM} RPM (for full step mode)")
-print("Speed will be adjusted for each mode to maintain similar rotation time")
-print("=" * 50)
-time.sleep(2.0)
+BASE_RPM = 60  # Base speed for full step mode
 
 while True:
     for mode, mode_name in MODES:
@@ -66,17 +62,12 @@ while True:
 
             # Get the number of microsteps for this mode
             microsteps = motor.microsteps_per_step
-
-            # Adjust speed to maintain similar rotation time across all modes
-            # More microsteps = need higher RPM to maintain same angular velocity
-            adjusted_rpm = BASE_RPM * (microsteps / 1.0)  # Normalized to full step
-            motor.speed = adjusted_rpm
+            motor.speed = BASE_RPM
 
             # Calculate total steps needed for one full revolution
             total_steps = STEPS_PER_REVOLUTION * microsteps
-
+            print(f"  Speed: {motor.speed} RPM")
             print(f"  Microsteps per full step: {microsteps}")
-            print(f"  Adjusted speed: {adjusted_rpm:.1f} RPM")
             print(f"  Steps for full revolution: {total_steps}")
 
             # Check for any faults before moving

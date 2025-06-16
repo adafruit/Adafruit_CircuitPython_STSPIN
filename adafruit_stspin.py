@@ -32,7 +32,7 @@ from micropython import const
 try:
     from typing import Literal, Optional
 except ImportError:
-    from typing_extensions import Literal
+    pass
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_STSPIN.git"
@@ -101,7 +101,7 @@ class Modes:
         return mode in cls._MICROSTEPS
 
 
-class STSPIN220:
+class STSPIN:
     """Driver for the STSPIN220 Low Voltage Stepper Motor Driver.
 
     :param ~microcontroller.Pin step_pin: The pin connected to STEP (step clock) input
@@ -294,23 +294,29 @@ class STSPIN220:
         self._dir_pin.value = steps > 0
         time.sleep(0.000001)  # 1 μs setup time
 
-        while steps_left > 0:
+        start_time = time.monotonic()
+        target_time = start_time
+
+        for i in range(steps_left):
+            target_time = start_time + (i * self._step_delay)
+
             now = time.monotonic()
+            wait_time = target_time - now
+            if wait_time > 0:
+                time.sleep(wait_time)
 
-            if (now - self._last_step_time) >= self._step_delay:
-                self._step()
+            self._step()
 
-                if steps > 0:
-                    self._step_number += 1
-                    if self._step_number >= self._steps_per_revolution:
-                        self._step_number = 0
-                elif self._step_number == 0:
-                    self._step_number = self._steps_per_revolution - 1
-                else:
-                    self._step_number -= 1
+            if steps > 0:
+                self._step_number += 1
+                if self._step_number >= self._steps_per_revolution:
+                    self._step_number = 0
+            elif self._step_number == 0:
+                self._step_number = self._steps_per_revolution - 1
+            else:
+                self._step_number -= 1
 
-                steps_left -= 1
-                self._last_step_time = now
+        self._last_step_time = time.monotonic()
 
     def _step(self) -> None:
         """Perform a single step pulse."""

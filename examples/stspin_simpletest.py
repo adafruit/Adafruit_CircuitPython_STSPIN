@@ -8,17 +8,18 @@ Basic example for the Adafruit STSPIN220 stepper motor driver library.
 
 import time
 
-import adafruit_stspin220
 import board
+
+import adafruit_stspin
 
 STEPS_PER_REVOLUTION = 200
 
-STEP_PIN = board.D5
-DIR_PIN = board.D6
+DIR_PIN = board.D5
+STEP_PIN = board.D6
 
 # Create stepper object with full pin configuration
 # Defaults to 1/16 microsteps
-motor = adafruit_stspin220.STSPIN220(STEP_PIN, DIR_PIN, STEPS_PER_REVOLUTION)
+motor = adafruit_stspin.STSPIN(STEP_PIN, DIR_PIN, STEPS_PER_REVOLUTION)
 
 # Set the speed to 60 RPM
 motor.speed = 60
