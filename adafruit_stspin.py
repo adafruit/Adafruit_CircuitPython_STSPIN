@@ -37,9 +37,6 @@ except ImportError:
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_STSPIN.git"
 
-__version__ = "0.0.0+auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_STSPIN220.git"
-
 
 # Timing characteristics
 TOFF_MIN_US = const(9)  # Minimum OFF time with ROFF=10kΩ (μs)
