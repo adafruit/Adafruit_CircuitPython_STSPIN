@@ -200,8 +200,7 @@ class STSPIN:
             self._step_delay = 1.0 / steps_per_second
 
             # Enforce minimum step delay (1 MHz max frequency = 1 μs minimum)
-            if self._step_delay < 0.000001:
-                self._step_delay = 0.000001
+            self._step_delay = max(self._step_delay, 0.000001)
 
     @property
     def step_mode(self) -> int:
